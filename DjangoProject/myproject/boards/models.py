@@ -14,6 +14,8 @@ class Topic(models.Model):
     last_updated = models.DateTimeField(auto_now_add=True)
     board = models.ForeignKey(Board, on_delete=models.CASCADE, related_name='topics')
     starter = models.ForeignKey(User, on_delete=models.CASCADE,related_name='topics')
+    # Add 'auto_now_add=true' to the 'last_updated' field
+    last_updated = models.DateTimeField(auto_now_add=True);
 
 
 class Post(models.Model):
@@ -23,3 +25,5 @@ class Post(models.Model):
     updated_at = models.DateTimeField(null=True)
     created_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name='posts')
     updated_by = models.ForeignKey(User, on_delete=models.CASCADE, null=True, related_name='+')
+    # Add 'null=True' to the 'updated_by' field
+    updated_by = models.ForeignKey(User, on_delete=models.CASCADE,null=True, related_name='+');
