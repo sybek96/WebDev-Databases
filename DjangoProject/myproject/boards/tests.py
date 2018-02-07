@@ -3,6 +3,8 @@ from django.urls import resolve, reverse
 from .views import home, board_topics, new_topic
 from django.contrib.auth.models import User
 from .models import Board, Topic, Post
+from .forms import NewTopicForm
+
 
 # Create your tests here.
 class HomeTests(TestCase):
@@ -95,15 +97,17 @@ class NewTopicTests(TestCase):
         response = self.client.post(url, data)
         self.assertTrue(Topic.objects.exists())
         self.assertTrue(Post.objects.exists())
-
-    def test_new_topic_invalid_post_data(self):
+        
+    def test_new_topic_invalid_post_data(self):  # <- updated this one
         '''
         Invalid post data should not redirect
         The expected behavior is to show the form again with validation errors
         '''
         url = reverse('new_topic', kwargs={'pk': 1})
         response = self.client.post(url, {})
+        form = response.context.get('form')
         self.assertEquals(response.status_code, 200)
+        self.assertTrue(form.errors)
 
     def test_new_topic_invalid_post_data_empty_fields(self):
         '''
@@ -119,3 +123,9 @@ class NewTopicTests(TestCase):
         self.assertEquals(response.status_code, 200)
         self.assertFalse(Topic.objects.exists())
         self.assertFalse(Post.objects.exists())
+
+    def test_contains_form(self):  # <- new test
+        url = reverse('new_topic', kwargs={'pk': 1})
+        response = self.client.get(url)
+        form = response.context.get('form')
+        self.assertIsInstance(form, NewTopicForm)
